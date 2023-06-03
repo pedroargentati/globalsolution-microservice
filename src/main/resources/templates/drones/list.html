@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Listagem de Drones</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+		body {
+			font-family: Arial, sans-serif;
+			margin: 20px;
+		}
+		
+		h1 {
+			text-align: center;
+			color: #333;
+		}
+		
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			margin-top: 20px;
+		}
+		
+		th, td {
+			padding: 10px;
+			text-align: left;
+			border-bottom: 1px solid #ccc;
+		}
+		
+		td {
+			text-align: center; /* Adicionado para centralizar os td's */
+		}
+		
+		th {
+			text-align: center; /* Adicionado para centralizar os th's */
+			background-color: #f2f2f2;
+			color: #333;
+			font-weight: bold;
+		}
+		
+		tr:nth-child(even) {
+			background-color: #f9f9f9;
+		}
+		
+		tr:hover {
+			background-color: #f5f5f5;
+		}
+		
+		.button-group {
+			margin-top: 10px;
+		}
+		
+		.button-group a {
+			display: inline-block;
+			margin-right: 5px;
+		}
+		
+		.button-group button.edit-button {
+			padding: 8px 16px;
+			background-color: #4CAF50;
+			border: none;
+			color: #fff;
+			cursor: pointer;
+			border-radius: 4px;
+			font-size: 14px;
+			transition: background-color 0.3s ease;
+		}
+		
+		.button-group button.edit-button:hover {
+			background-color: #45a049;
+		}
+		
+		.button-group button.add-button {
+			padding: 8px 16px;
+			background-color: #2196F3;
+			border: none;
+			color: #fff;
+			cursor: pointer;
+			border-radius: 4px;
+			font-size: 14px;
+			transition: background-color 0.3s ease;
+		}
+		
+		.button-group button.add-button:hover {
+			background-color: #0b7dda;
+		}
+		
+		.add-button {
+			text-align: center;
+		}
+		
+		.add-button button {
+			padding: 10px 20px;
+			background-color: #2196F3;
+			border: none;
+			color: #fff;
+			cursor: pointer;
+			border-radius: 4px;
+			font-size: 18px;
+			margin-top: 20px;
+		}
+		
+		.add-button button:hover {
+			background-color: #0b7dda;
+		}
+		
+		.td-icon {
+			position: relative;
+		}
+		
+		.icon-container {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+		
+		.icon-button {
+			background-color: transparent;
+			border: none;
+			cursor: pointer;
+		}
+		
+		.icon-button i {
+			color: black;
+			margin-right: 5px; /* Ajuste o valor da margem conforme necessário */
+		}
+		
+		.icon-button:hover i {
+			color: red; /* Defina a cor desejada */
+		}
+		
+		.td-icon.empty .icon-container {
+			display: none;
+		}
+		
+		.modal {
+			display: none;
+			position: fixed;
+			z-index: 1;
+			left: 0;
+			top: 0;
+			width: 100%;
+			height: 100%;
+			overflow: auto;
+			background-color: rgba(0, 0, 0, 0.5);
+		}
+		
+		.modal-content {
+			position: relative;
+			background-color: #fefefe;
+			margin: 7% auto;
+			padding: 20px;
+			border: 1px solid #888;
+			width: 50%;
+			border-radius: 8px;
+		}
+		
+		.modal-content form {
+			margin-top: 20px;
+		}
+		
+		.modal-content form label {
+			display: block;
+			margin-bottom: 5px;
+			font-weight: bold;
+		}
+		
+		.modal-content form input[type="text"], .modal-content form input[type="number"],
+			.modal-content form input[type="date"] {
+			width: 100%;
+			padding: 8px;
+			border: 1px solid #ccc;
+			border-radius: 4px;
+			margin-bottom: 10px;
+			box-sizing: border-box;
+		}
+		
+		.modal-content form button[type="submit"] {
+			padding: 10px 20px;
+			background-color: #2196F3;
+			border: none;
+			color: #fff;
+			cursor: pointer;
+			border-radius: 4px;
+			font-size: 16px;
+		}
+		
+		.modal-content form button[type="submit"]:hover {
+			background-color: #0b7dda;
+		}
+		
+		.modal-content form .required::after {
+			content: "*";
+			color: red;
+			margin-left: 5px;
+		}
+		
+		.modal-close-button {
+			background: none;
+			border: none;
+			cursor: pointer;
+			font-size: 24px;
+			color: #333;
+		}
+		
+		.form-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 20px;
+		}
+		
+		input[readonly] {
+			background-color: #f2f2f2; /* Cor de fundo */
+			cursor: not-allowed; /* Cursor não permitido */
+		}
+		
+		.form-header .fas {
+			color: red;
+			cursor: pointer;
+		}
+		
+		.form-header .fas:hover {
+			color: rgb(219, 54, 36);
+			cursor: pointer;
+		}
+</style>
+</head>
+<body>
+    <h1>Listagem de Drones</h1>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Modelo</th>
+                <th>Data de Compra</th>
+                <th>Capacidade de Bateria</th>
+                <th>Número de Série</th>
+                <th>Licença de Voo</th>
+                <th>Capacidade de Carga</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="drone : ${drones}">
+                <td th:text="${drone.idDrone}"></td>
+                <td th:text="${drone.modelo}"></td>
+                <td th:text="${#dates.format(drone.dataCompra, 'dd/MM/yyyy')}"></td>
+                <td th:text="${drone.capacidadeBateria}"></td>
+                <td th:text="${drone.numeroSerie}"></td>
+				<td class="td-icon" id="licencaVooCell" th:classappend="${drone.licencaVoo == null ? 'empty' : ''}">
+				  <div class="icon-container">
+				    <span th:text="${drone.licencaVoo}"></span>
+				    <button class="icon-button" th:attr="data-id=${drone.idDrone}" onclick="carregarDetalhesLicenca(this)">
+				      <i class="fas fa-eye"></i>
+				    </button>
+				  </div>
+				</td>
+                <td th:text="${drone.capacidadeCarga}"></td>
+				<td class="button-group">
+				    <a th:href="@{/drones/editar/{id}(id=${drone.idDrone})}">
+				        <button class="edit-button">
+				            <i class="fas fa-pencil-alt"></i> Editar
+				        </button>
+				    </a>
+				    <a th:href="@{/licencas/novo/{id}(id=${drone.idDrone})}">
+				        <button class="add-button">
+				            <i class="fas fa-plus"></i> Adicionar Licença
+				        </button>
+				    </a>
+				</td>
+            </tr>
+        </tbody>
+    </table>
+
+	<div class="add-button">
+		<button onclick="window.location.href='/drones/novo'"><i class="fas fa-plus"></i> Adicionar Drone</button>
+	</div>
+	
+	
+	<div id="modal" class="modal">
+	  <div class="modal-content">
+	    <div class="form-header">
+	      <h2>Detalhes da licença</h2>
+	      <button class="modal-close-button">
+	        <i class="fas fa-times"></i>
+	      </button>
+	    </div>
+	    <form>
+	      <label class="required" for="idDrone">ID do Drone:</label>
+	      <input type="number" id="idDrone" name="idDrone" readonly>
+	      <label class="required" for="idDrone">Modelo do Drone</label>
+	      <input type="text" id="modeloDrone" name="modeloDrone" readonly>
+	      <label class="required" for="licencaVoo">Licença de Voo:</label>
+	      <input type="number" id="licencaVoo" name="licencaVoo" readonly>
+	      <label class="required" for="dataValidade">Data de Validade:</label>
+	      <input type="date" id="dataValidade" name="dataValidade" readonly>
+	      <label class="required" for="dataEmissao">Data de Emissão:</label>
+	      <input type="date" id="dataEmissao" name="dataEmissao" readonly>
+	    </form>
+	  </div>
+	</div>
+
+
+</body>
+<script type="text/javascript">
+	const tdElement = document.querySelector('.td-icon');
+	const textElement = tdElement.querySelector('span');
+	if (!textElement.textContent.trim()) {
+	    tdElement.classList.add('empty');
+	}
+	
+	$(document).ready(function() {
+	    $('.icon-button').on('click', function() {
+	        // Abrir o modal
+	        $('#modal').show();
+	    });
+	
+	    $(document).ready(function() {
+	        $('.modal-close-button').on('click', function() {
+	            $('#modal').hide();
+	        });
+	    });
+	});
+	
+	function carregarDetalhesLicenca(button) {
+	    const id = button.getAttribute('data-id');
+	    fetch(`/licenca/detalhes/${id}`)
+	        .then(response => {
+	            if (!response.ok) {
+	                throw new Error('Erro ao carregar detalhes da licença');
+	            }
+	            return response.json();
+	        })
+	        .then(data => {
+	            // Obtenha a data de validade e remova o horário e o deslocamento de fuso horário
+	            const dataValidade = data.dataValidade.split("T")[0];
+	
+	            // Obtenha a data de emissão e remova o horário e o deslocamento de fuso horário
+	            const dataEmissao = data.dataEmissao.split("T")[0];
+	            // Popula os campos do formulário com os dados retornados
+	            document.getElementById('idDrone').value = data.idDrone;
+	            document.getElementById('modeloDrone').value = data.modeloDrone;
+	            document.getElementById('licencaVoo').value = data.licencaVoo;
+	            document.getElementById('dataValidade').value = dataValidade;
+	            document.getElementById('dataEmissao').value = dataEmissao;
+	
+	            // Abra o modal ou faça outras ações com os dados retornados
+	        })
+	        .catch(error => {
+	            console.error(error);
+	        });
+	}
+
+</script>
+</html>

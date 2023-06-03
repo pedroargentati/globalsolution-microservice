@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Cadastro de Licenças</title>
+<style>
+	body {
+	    font-family: 'Arial', sans-serif;
+	    background-color: #f0f0f0;
+	    color: #333;
+	    margin: 0;
+	    padding: 0;
+	    display: flex;
+	    flex-direction: column;
+	    justify-content: center;
+	    align-items: center;
+	    height: 100vh;
+	}
+	
+	h1 {
+	    text-align: center;
+	    color: #5C6BC0;
+	    padding-bottom: 15px;
+	}
+	
+	form {
+	    background-color: #fff;
+	    padding: 50px;
+	    border-radius: 8px;
+	    box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
+	    width: 500px;
+	    margin-bottom: 15px;
+	}
+	
+	.form-group {
+	    margin-bottom: 20px;
+	}
+	
+	.form-group label {
+	    display: block;
+	    font-weight: bold;
+	    margin-bottom: 5px;
+	}
+	
+	.form-group input {
+	    width: 100%;
+	    padding: 10px;
+	    border-radius: 4px;
+	    border: 1px solid #ccc;
+	    margin: 0 0 10px 0; /* Alterei a margem para adicionar espaço abaixo dos inputs */
+	}
+	
+	/* Estilizar inputs readonly */
+	input:read-only {
+	    background-color: #e0e0e0;
+	}
+	
+	button[type="submit"] {
+	    width: 100%;
+	    padding: 10px;
+	    color: #fff;
+	    background-color: #5C6BC0;
+	    border: none;
+	    border-radius: 4px;
+	    cursor: pointer;
+	    transition: background-color 0.3s ease;
+	    font-size: 16px;
+	}
+	
+	button[type="submit"]:hover {
+	    background-color: #3F51B5;
+	}
+	
+	.back-link {
+	    display: inline-block;
+	    margin-top: 20px;
+	    text-decoration: none;
+	    color: #5C6BC0;
+	    font-size: 14px;
+	    border: 1px solid #5C6BC0;
+	    border-radius: 4px;
+	    padding: 8px 16px;
+	    transition: background-color 0.3s ease;
+	}
+	
+	.back-link:hover {
+	    background-color: #5C6BC0;
+	    color: #fff;
+	}
+	
+	/* Estilo para o asterisco dos campos obrigatórios */
+	.required::after {
+	    content:" *";
+	    color: red;
+	}
+
+</style>
+</head>
+<body>
+    <h1>Cadastro de Licenças</h1>
+
+    <form method="post" th:action="@{/licencas/salvar}">
+    
+       <div class="form-group">
+            <label class="required" for="idDrone">ID do Drone:</label>
+          	<input type="number" id="idDrone" name="idDrone" th:value="${licenca.idDrone}" readonly>
+        </div>
+        
+        <div class="form-group">
+            <label class="required" for="idDrone">Modelo do Drone</label>
+          	<input type="text" id="modeloDrone" name="modeloDrone" th:value="${licenca.modeloDrone}" readonly>
+        </div>
+        
+        <div class="form-group">
+            <label class="required" for="licencaVoo">Licença de Voo:</label>
+            <input type="number" id="licencaVoo" name="licencaVoo" required>
+        </div>
+
+        <div class="form-group">
+            <label class="required" for="dataValidadeStr">Data de Validade:</label>
+            <input type="date" id="dataValidadeStr" name="dataValidadeStr" required>
+        </div>
+
+        <div class="form-group">
+            <label class="required" for="dataEmissaoStr">Data de Emissão:</label>
+            <input type="date" id="dataEmissaoStr" name="dataEmissaoStr" required>
+        </div>
+
+        <div class="form-group">
+            <button type="submit" >Salvar</button>
+        </div>
+    </form>
+        <a href="/drones" class="back-link">Voltar para a Listagem de Drones</a>
+</body>
+</html>
